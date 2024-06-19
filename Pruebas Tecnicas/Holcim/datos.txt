@@ -1,0 +1,301 @@
+Country	Customer	Name	Customer Type
+Argentina	35180	ABARROTES SUR	Tercero
+Nicaragua	35858	ACEROS C	Tercero
+Argentina	35417	ACEROS P	Tercero
+Nicaragua	36023	ACUEDUCT	Tercero
+Costa Rica	35352	AEES MAN	Tercero
+Argentina	35782	AGREGADO	Tercero
+Nicaragua	35744	ALASSA S	Tercero
+Nicaragua	35898	ALMARAN 	Tercero
+Colombia	35702	ANDREA S	Tercero
+Argentina	35868	ARTURO C	Tercero
+Costa Rica	36062	AYUNTAMI	Tercero
+Colombia	35675	BALDOR Y	Tercero
+Argentina	35851	BAUSCH &	Tercero
+Argentina	35592	BBP REYN	Tercero
+Argentina	36071	BLOCK  C	Tercero
+Argentina	35292	BLOCK , 	Tercero
+Costa Rica	35781	BLOCK Y 	Tercero
+Nicaragua	35187	BLOCKERA Y MATERIALES GERALDO´S	Tercero
+Nicaragua	35543	BLOQUERA	Tercero
+Argentina	35560	BLOQUERA	Tercero
+Colombia	35750	BLOQUERA	Tercero
+Colombia	35222	BLOQUES 	Tercero
+Nicaragua	35873	BOEHRING	Tercero
+Colombia	35905	BOLSAS S	Tercero
+Argentina	36013	BORREGO 	Tercero
+Colombia	35872	BTSL (BI	Tercero
+Nicaragua	35929	CAMPAMEN	Tercero
+Argentina	35762	CANO GOM	Tercero
+Argentina	35645	CATALINA	Tercero
+Colombia	36076	CEMCO, V	Tercero
+Colombia	35362	CEMENTO 	Tercero
+Argentina	35356	CEMENTOS	Tercero
+Argentina	35308	CENTRIFU	Tercero
+Nicaragua	36055	CENTRIFU	Tercero
+Colombia	36066	CENTRIFU	Tercero
+Colombia	35455	CERAMAT 	Tercero
+Argentina	35688	CERAMAT 	Tercero
+Nicaragua	35965	CERAMAT 	Tercero
+Argentina	35790	CERAMICA	Tercero
+Colombia	35577	CHAVEZ C	Tercero
+Colombia	35857	CHAVEZ G	Tercero
+Costa Rica	36010	CLAVOS Y	Tercero
+Argentina	35469	COMALAPA	Tercero
+Nicaragua	35281	COMERCIA	Tercero
+Nicaragua	36059	COMERCIA	Tercero
+Nicaragua	36006	COMPAÑIA	Tercero
+Argentina	35203	CONCRETO	Tercero
+Nicaragua	35636	CONCRETO	Tercero
+Argentina	35863	CONCRETO	Tercero
+Argentina	35930	CONCRETO	Tercero
+Nicaragua	36120	CONCRETO	Tercero
+Nicaragua	35498	CONIN MA	Tercero
+Argentina	35718	CONSTRUC	Tercero
+Argentina	35733	CONSTRUC	Tercero
+Colombia	35723	CONSTRUF	Tercero
+Nicaragua	35683	CONSTRUM	Tercero
+Argentina	35856	CONSTRUT	Tercero
+Colombia	36002	CONSUMO 	Tercero
+Argentina	35655	CORPORAT	Tercero
+Costa Rica	35732	CORSA PL	Tercero
+Argentina	35684	CULEBRO 	Tercero
+Nicaragua	35842	DALSA (C	Tercero
+Nicaragua	35795	DANISCO 	Tercero
+Colombia	36017	DE LA TO	Tercero
+Argentina	35679	DE LA VE	Tercero
+Argentina	35400	DESARROL	Tercero
+Argentina	35820	DESTRUCC	Tercero
+Colombia	35207	DIAZ FAR	Tercero
+Argentina	36041	DISMATCO	Tercero
+Argentina	35831	DISTRIBU	Tercero
+Colombia	35954	DISTRIBU	Tercero
+Colombia	35406	DOWELL B	Tercero
+Colombia	35760	ECO SERV	Tercero
+Colombia	35262	EL GENIO	Tercero
+Argentina	35969	EL PUENT	Tercero
+Nicaragua	35612	ELECTR Y	Tercero
+Argentina	36044	EMIR RAM	Tercero
+Nicaragua	35676	ENVASES 	Tercero
+Argentina	35916	ESCOBEDO	Tercero
+Nicaragua	35993	EST.Y PE	Tercero
+Colombia	35430	FERREACE	Tercero
+Argentina	35745	FERREMAT	Tercero
+Colombia	35298	FERRETER	Tercero
+Colombia	35321	FERRETER	Tercero
+Nicaragua	35463	FERRETER	Tercero
+Argentina	35500	FERRETER	Tercero
+Colombia	35629	FERRETER	Tercero
+Argentina	35633	FERRETER	Tercero
+Nicaragua	35698	FERRETER	Tercero
+Nicaragua	35726	FERRETER	Tercero
+Colombia	35774	FERRETER	Tercero
+Argentina	35985	FERRETER	Tercero
+Colombia	36050	FERRETER	Tercero
+Argentina	36095	FERRETER	Tercero
+Argentina	36128	FERRETER	Tercero
+Nicaragua	36138	FERRETER	Tercero
+Colombia	35139	FERRETERIA	Tercero
+Argentina	34601	FERRETERIA 1	Tercero
+Nicaragua	34659	FERRETERIA 10	Tercero
+Argentina	34660	FERRETERIA 11	Tercero
+Argentina	34675	FERRETERIA 12	Tercero
+Colombia	34676	FERRETERIA 13	Tercero
+Nicaragua	34678	FERRETERIA 14	Tercero
+Colombia	34616	FERRETERIA 2	Tercero
+Nicaragua	34617	FERRETERIA 3	Tercero
+Argentina	34636	FERRETERIA 4	Tercero
+Colombia	34644	FERRETERIA 5	Tercero
+Nicaragua	34647	FERRETERIA 6	Tercero
+Costa Rica	34649	FERRETERIA 7	Tercero
+Argentina	34650	FERRETERIA 8	Tercero
+Colombia	34656	FERRETERIA 9	Tercero
+Nicaragua	35836	FERROMAT	Tercero
+Nicaragua	35853	FERROMET	Tercero
+Argentina	35864	FERROSOS	Tercero
+Colombia	35646	FERSINSA	Tercero
+Nicaragua	35326	GENERAL 	Tercero
+Argentina	35893	GENERAL 	Tercero
+Argentina	35984	GENERAL 	Tercero
+Argentina	35886	GENOMMA 	Tercero
+Colombia	35770	GM RAMOS	Tercero
+Nicaragua	35730	GRUPO AR	Tercero
+Colombia	35620	GUANAJUA	Tercero
+Argentina	35739	GUY KIPP	Tercero
+Colombia	35735	GUZMAN M	Tercero
+Nicaragua	35443	HALLIBUR	Tercero
+Argentina	35671	HALLIBUR	Tercero
+Colombia	35791	HECTOR R	Tercero
+Argentina	35390	HERNANDE	Tercero
+Costa Rica	35615	HERNANDE	Tercero
+Colombia	35810	HERNANDE	Tercero
+Nicaragua	35632	HERRERA 	Tercero
+Colombia	36058	HOLCIM  	Tercero
+Costa Rica	35179	HOMECENTER NORTE	Tercero
+Nicaragua	35156	HOMECENTER SUR	Tercero
+Argentina	35195	HUNTSMAN	Tercero
+Colombia	35601	INDUSTRI	Tercero
+Colombia	35840	Industri	Tercero
+Argentina	35947	INMOBILI	Tercero
+Argentina	35799	IRRA ROD	Tercero
+Argentina	35815	JEASA MA	Tercero
+Argentina	35846	JIBE PLA	Tercero
+Costa Rica	35639	JORGE AB	Tercero
+Argentina	35284	KARLA IR	Tercero
+Nicaragua	35945	KM. 5 CA	Tercero
+Nicaragua	35504	KURODA, 	Tercero
+Argentina	35764	LA BODEG	Tercero
+Argentina	35738	LABORATO	Tercero
+Nicaragua	35910	LABORATO	Tercero
+Argentina	35716	LIGIA RI	Tercero
+Colombia	35497	LOPEZ GO	Tercero
+Nicaragua	35212	LOPEZ HI	Tercero
+Nicaragua	35712	LOS VOLC	Tercero
+Argentina	35787	LUIS ORL	Tercero
+Argentina	35808	LVMH PER	Tercero
+Nicaragua	35621	MADEIRA'	Tercero
+Costa Rica	35966	MADERAS 	Tercero
+Colombia	35518	MANEJO Y	Tercero
+Colombia	35710	MARQUEZ 	Tercero
+Nicaragua	35850	MATECO	Tercero
+Nicaragua	35381	MATERIAL	Tercero
+Costa Rica	35448	MATERIAL	Tercero
+Nicaragua	35589	MATERIAL	Tercero
+Argentina	35625	MATERIAL	Tercero
+Costa Rica	35677	MATERIAL	Tercero
+Colombia	35697	MATERIAL	Tercero
+Colombia	35729	MATERIAL	Tercero
+Costa Rica	35754	MATERIAL	Tercero
+Colombia	35835	MATERIAL	Tercero
+Costa Rica	35837	MATERIAL	Tercero
+Colombia	35879	MATERIAL	Tercero
+Nicaragua	35880	MATERIAL	Tercero
+Argentina	36069	MATERIAL	Tercero
+Argentina	36110	MATERIAL	Tercero
+Colombia	36112	MATERIAL	Tercero
+Colombia	35184	MATERIALES FERRE	Tercero
+Nicaragua	35736	MECASA M	Tercero
+Costa Rica	35875	MECASA S	Tercero
+Argentina	35994	MECASA T	Tercero
+Argentina	35708	MENDOZA 	Tercero
+Nicaragua	35805	MERCADO 	Tercero
+Colombia	35896	MERCANTI	Tercero
+Colombia	35989	MERCANTI	Tercero
+Costa Rica	35855	MILENIO 	Tercero
+Nicaragua	36068	MILENIO 	Tercero
+Nicaragua	36101	MILENIO 	Tercero
+Argentina	36123	MM CONCR	Tercero
+Colombia	35822	MORALES 	Tercero
+Costa Rica	36103	MORTEROS	Tercero
+Costa Rica	35507	MOTORES 	Tercero
+Costa Rica	35248	MULTIBLO	Tercero
+Argentina	35772	MULTIBLO	Tercero
+Argentina	35701	NATALIA 	Tercero
+Argentina	35558	OSCAR AL	Tercero
+Argentina	35483	PALENQUE	Tercero
+Costa Rica	35807	PCAVM	Tercero
+Colombia	35503	PEREA GO	Tercero
+Argentina	35839	PFIZER S	Tercero
+Argentina	35843	PINEDA C	Tercero
+Nicaragua	35413	PLAYAS D	Tercero
+Argentina	35513	PLO ELEC	Tercero
+Nicaragua	35227	PREFABRI	Tercero
+Argentina	35622	PREFABRI	Tercero
+Costa Rica	35913	PREFABRI	Tercero
+Nicaragua	36092	PREMEZCL	Tercero
+Colombia	35852	PROCON C	Tercero
+Argentina	35220	PROCON E	Tercero
+Colombia	35971	PROMATER	Tercero
+Nicaragua	35778	PROVEEDO	Tercero
+Colombia	35784	PROVEEDO	Tercero
+Argentina	36065	QUMA PLA	Tercero
+Argentina	35454	RAMIREZ 	Tercero
+Nicaragua	35771	RAMIREZ 	Tercero
+Argentina	35759	RECICLAJ	Tercero
+Colombia	35680	REYES ZA	Tercero
+Nicaragua	35867	ROBLES A	Tercero
+Argentina	35250	ROBLES R	Tercero
+Nicaragua	35299	RODRIGUE	Tercero
+Colombia	35940	RODRIGUE	Tercero
+Costa Rica	35707	SAF SA D	Tercero
+Nicaragua	35761	SAN ANTO	Tercero
+Argentina	35619	SANCHEZ 	Tercero
+Colombia	35634	SANCHEZ 	Tercero
+Nicaragua	35786	SANCHEZ 	Tercero
+Colombia	36098	SANCHEZ 	Tercero
+Nicaragua	35751	SANDOZ S	Tercero
+Colombia	35865	SANITARI	Tercero
+Colombia	35743	SARA GAR	Tercero
+Argentina	35651	SEMINIS 	Tercero
+Nicaragua	35811	SERVIOBR	Tercero
+Nicaragua	35648	SOCIEDAD	Tercero
+Nicaragua	35977	SOFIA RO	Tercero
+Argentina	35728	SORIA VI	Tercero
+Argentina	35937	SUCURSAL	Tercero
+Nicaragua	35827	SUPER FE	Tercero
+Argentina	35876	TECNOFAR	Tercero
+Colombia	35922	TESA TAP	Tercero
+Argentina	34684	TIENDA 1	Tercero
+Colombia	34790	TIENDA 10	Tercero
+Nicaragua	34813	TIENDA 11	Tercero
+Argentina	34823	TIENDA 12	Tercero
+Colombia	34829	TIENDA 13	Tercero
+Nicaragua	34837	TIENDA 14	Tercero
+Costa Rica	34837	TIENDA 15	Tercero
+Argentina	34854	TIENDA 16	Tercero
+Colombia	34867	TIENDA 17	Tercero
+Nicaragua	34880	TIENDA 18	Tercero
+Argentina	34881	TIENDA 19	Tercero
+Colombia	34692	TIENDA 2	Tercero
+Argentina	34891	TIENDA 20	Tercero
+Colombia	34911	TIENDA 21	Tercero
+Nicaragua	34917	TIENDA 22	Tercero
+Argentina	34922	TIENDA 23	Tercero
+Colombia	34932	TIENDA 24	Tercero
+Nicaragua	34934	TIENDA 25	Tercero
+Costa Rica	34936	TIENDA 26	Tercero
+Argentina	34942	TIENDA 27	Tercero
+Colombia	34943	TIENDA 28	Tercero
+Nicaragua	34944	TIENDA 29	Tercero
+Nicaragua	34700	TIENDA 3	Tercero
+Argentina	34948	TIENDA 30	Tercero
+Argentina	34950	TIENDA 31	Tercero
+Colombia	34975	TIENDA 32	Tercero
+Nicaragua	34977	TIENDA 33	Tercero
+Argentina	34978	TIENDA 34	Tercero
+Colombia	34979	TIENDA 35	Tercero
+Nicaragua	34983	TIENDA 36	Tercero
+Costa Rica	34993	TIENDA 37	Tercero
+Argentina	34999	TIENDA 38	Tercero
+Colombia	35014	TIENDA 39	Tercero
+Costa Rica	34739	TIENDA 4	Tercero
+Nicaragua	35017	TIENDA 40	Tercero
+Argentina	35026	TIENDA 41	Tercero
+Argentina	35028	TIENDA 42	Tercero
+Colombia	35033	TIENDA 43	Tercero
+Nicaragua	35034	TIENDA 44	Tercero
+Argentina	35045	TIENDA 45	Tercero
+Colombia	35051	TIENDA 46	Tercero
+Nicaragua	35056	TIENDA 47	Tercero
+Costa Rica	35059	TIENDA 48	Tercero
+Argentina	35060	TIENDA 49	Tercero
+Argentina	34742	TIENDA 5	Tercero
+Colombia	35064	TIENDA 50	Tercero
+Nicaragua	35078	TIENDA 51	Tercero
+Argentina	35085	TIENDA 52	Tercero
+Argentina	35092	TIENDA 53	Tercero
+Colombia	35115	TIENDA 54	Tercero
+Nicaragua	35134	TIENDA 55	Tercero
+Argentina	35135	TIENDA 56	Tercero
+Colombia	34762	TIENDA 6	Tercero
+Nicaragua	34770	TIENDA 7	Tercero
+Argentina	34773	TIENDA 8	Tercero
+Argentina	34779	TIENDA 9	Tercero
+Colombia	35849	TODOCLAV	Tercero
+Colombia	35802	TOGA MOZ	Tercero
+Nicaragua	35703	TOMAS CA	Tercero
+Argentina	35899	TPN PLAN	Tercero
+Nicaragua	35667	TRICO CO	Tercero
+Colombia	35664	TRITURAD	Tercero
+Argentina	36057	TUBOS DE	Tercero
+Colombia	36134	TUBOS DE	Tercero

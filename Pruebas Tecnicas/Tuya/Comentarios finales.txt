@@ -1,0 +1,9 @@
+A ultimo minuto tuve inconvenientes con el equipo personal donde realicé la prueba y dado que no me encuentro en mi lugar
+de residencia se me imposibilita crear un entorno para un projecto SQL y la ejecucion de query en cada una de las tablas.
+
+El ejercicio lo he resuelto con  pseudo-codigo de Postgree SQL.
+
+De antemano agradezco la oportunidad y espero tener pronta noticias del equipo de Tuya;
+
+Gracias. 
+Jhonatan Smith Garcia M.

@@ -1,0 +1,450 @@
+---
+title: "Prueba tecnica"
+author: "Jhonatan Smith Garcia"
+date: "2024-17-01"
+output: rmdformats::readthedown
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+	echo = FALSE,
+	message = FALSE,
+	warning = FALSE
+)
+```
+
+
+
+```{r include=FALSE}
+# Cargue de librerias
+library(ggplot2)
+library(tidyverse)
+library(plotly)
+library(readxl)
+require(lubridate)
+library(janitor)
+require(kableExtra)
+library(moments) # asimetria
+library(e1071)
+library(mice)
+require(lubridate)
+```
+
+
+```{r message=FALSE, warning=FALSE}
+# importe de datos
+detalle_cliente <- read_excel("Prueba proceso de selección Analista de Datos - bases.xlsx", 
+    sheet = "Detalle_cliente")
+
+# Corrigiendo la fecha: detalle_cliente
+detalle_cliente$fecha_efectiva = ymd(detalle_cliente$fecha_efectiva)
+
+detalle_tx <- read_excel("Prueba proceso de selección Analista de Datos - bases.xlsx", 
+    sheet = "Detalle_tx")
+
+```
+
+# Contexto
+
+Los datos proceden de TUYA, una compañía relacionada con el sector financiero adquirida por el Grupo Bancolombia en 2003. Como entidad financiera, TUYA ofrece productos financieros como tarjetas de crédito, créditos de vehículo, entre otros.
+
+**Sobre el problema**
+
+Se desea identificar patrones sobre el habito transacional de los clientes. 
+
+## Supuestos
+
+Dada la falta de contexto, se deben realizar algunos supuestos que no quedan claros en el ejercicio. Se cuentan con dos bases de datos, una relacionada con el detalle del cliente, que posee las siguientes variables.
+
+```{r}
+detalle_cliente %>% names %>% t %>% kable
+```
+
+Dicha base de datos posee la siguiente estructura:
+
+```{r}
+detalle_cliente %>% arrange(by = Id_tx) %>% head() %>% kable
+```
+
+Note que el Id_tx de la transacción identifica precisamente una transacción. Desde la intuición, dicha transacción debería ser única, pero puede tener diferentes estados (en este contexto, COMPRA, AVANCE, SEGURO).
+
+Desde el sentido común, un cliente puede tener diferentes transacciones, ya que una persona puede generar un **avance** y, el mismo día, realizar una **compra**. Si este es el caso, ¿por qué una transacción está asociada a diferentes clientes? Dicho de otra manera, ¿cómo se relaciona la transacción y el cliente?
+
+La segunda base de datos contiene información asociada a la transacción. Las variables de dicha base de datos son las siguientes:
+
+```{r}
+detalle_tx %>% names() %>% t %>% kable
+```
+
+El Id_tx identifica la transacción en las bases de datos. La clase identifica el tipo de transacción que se realiza (nuevamente, COMPRA, AVANCE o SEGURO). Finalmente, se tiene el valor asociado a la transacción.
+
+La base de datos asociada a las transacciones tiene la siguiente estructura. 
+
+```{r}
+detalle_tx %>% arrange(by = Id_tx) %>% head() %>% kable()
+```
+
+
+Ahora, con esto, tomemos como ejemplo la transacción número 2457, que está asociada a los clientes 109 y 125 con las fechas del 23 de octubre de 2020 y 11 de enero de 2021. A primera vista, la información asociada parece ser de compras diferentes y al analizar dicha transacción (2457) aparecen dos valores posibles para dicha transacción: AVANCE y COMPRA.
+
+## Conteo de valores duplicados
+
+```{r}
+print(paste("Valores repetidos bd clientes",  detalle_cliente %>% nrow-detalle_cliente$Id_tx %>% unique %>% length()))
+
+print(paste("Valores repetidos bd transaciones",  detalle_tx %>% nrow-detalle_tx$Id_tx %>% unique %>% length()))
+```
+
+Dado que los valores repetidos son exactamente los mismos en ambas bases de datos y considerando todo lo ya mencionado, se presupone un error en la estructura de los datos, bajo el supuesto de transacciones únicas. Dado que los valores duplicados son relativamente bajos, se eliminan dichos valores para seguir la naturaleza lógica del problema. Se ha de indagar mas a fondo sobre los registros que presentan problemas. 
+
+```{r}
+detalle_cliente <- detalle_cliente %>%
+  filter(!duplicated(Id_tx))
+
+detalle_tx = detalle_tx %>% filter(!duplicated(Id_tx))
+```
+
+## Consideraciones
+
+En las consideraciones, se tiene en cuenta un perfil con mayor afinidad al producto. Dicho perfil incluye clientes con un mayor número de compras, mayor facturación y, al menos, una utilización en los últimos días.
+
+No obstante, este último aspecto no especifica una ventana de tiempo para los análisis. Es decir, ¿"pocos días" se refiere a la última fecha registrada en la base de datos o sugiere que la diferencia de tiempo entre las compras no debe ser mayor a ciertos días? Dada esta ambigüedad, se descartan los posibles análisis temporales para los perfiles.
+
+# Data wrangling
+
+En esta seccion se procede a realizar analisis de datos faltantes y la estructura general de la base de datos para los correctos analisis.
+
+## Agregando Fecha de transaccion
+
+
+Un posible análisis de interés sería identificar el comportamiento dado la fecha. Se procede a anexar dicha información a la base de datos asociada a la transacción.
+
+
+```{r}
+df = left_join(detalle_tx, detalle_cliente, by = "Id_tx")
+```
+
+
+```{r}
+# correcion del valor
+df$valor= df$valor %>% as.numeric()
+
+df$clase= df$clase %>% as.factor()
+
+df %>% summary
+```
+
+  * Id_tx es numerica. Indiferente para analisis
+  
+  * clase posee NA's
+  
+  * valor posee NA's. 
+  
+  * Id_cliente es numerica. Indiferente al analisis.
+  
+  * fecha_efectiva con 12 NA's. Se investiga. 
+  
+## Revision fecha
+
+Se muestran los datos sin fechas. Probablemente por la inputacion de los datos. 
+
+```{r}
+
+df %>% filter(fecha_efectiva %>% is.na())
+
+```
+
+```{r}
+mediana_fecha <- as.Date(median(as.numeric(df$fecha_efectiva), na.rm = TRUE))
+df$fecha_efectiva[is.na(df$fecha_efectiva)] = mediana_fecha
+```
+
+Se procede a reemplazar el valor por la mediana de los dato la cual es el 2020-11-30. Con esto, los datos quedan de la siguiente forma
+
+## Imputacion de Valor
+
+```{r}
+
+df %>%
+  ggplot(aes(x = valor)) +
+  geom_histogram(fill = "skyblue", color = "black", bins = 30) +
+  labs(title = "Histograma 'valor'",
+       x = "Valor",
+       y = "Frecuencia")
+
+```
+
+```{r}
+asimetria = skewness(df$valor, na.rm = T)
+curtosis = kurtosis(df$valor, na.rm =T)
+
+print(paste("Asimetria:", asimetria %>% round(2)))
+print(paste("Curtosis:", curtosis %>% round(2)))
+```
+Como el histograma parece alejarse de la normalidad y posee colas pesada a la derecha, es un error inputar el dato numerico por la media. Se utiliza la mediana puesto es menos sensible a valores extremos. Se podria realizar tecnicas de imputacion mas avanzadas como regresion pero para efectos practicos y dado que faltan pocos datos, se procede a la mediana. 
+
+```{r}
+df$valor[is.na(df$valor)] = median(df$valor, na.rm=T)
+```
+
+## Imputacion clase
+
+Datos antes de imputar
+
+```{r}
+df$clase %>% summary
+```
+Datos despues de imputar
+
+```{r include=FALSE}
+# rapidamente con mice: 
+df_imputed <- mice(df, m=1, maxit=50, method='cart', seed=500)
+df = complete(df_imputed,1)
+
+```
+
+## Resumen
+
+```{r}
+df %>% summary
+```
+
+# Analisis descriptivos (Univariado)
+
+En este apartado se desea analizar los datos de manera grafica para identificar patrones que a priori puedan ayudar a la pregunta problema.
+
+```{r}
+df %>% names
+```
+## Univariado
+
+**Clase**
+
+```{r}
+df$clase %>%table %>% prop.table() %>% round(4) %>%t %>%  kable()
+```
+La gran mayoria de las transacciones son compras. De hecho, las compras representan el 77.47% de las transacciones. 
+
+Los seguros destacan por su ausencia. Los clientes *no* compran seguros. 
+
+```{r}
+z=ggplot(df, aes(x = valor/100000)) +
+  geom_histogram(fill = "skyblue", color = "black", bins = 30) +
+  labs(title = "Valor de transacion",
+       x = "Valor (en miles)",
+       y = "Frecuencia")
+
+ggplotly(z)
+
+```
+
+Note que la inmensa mayoria de los datos son transacciones menores a 200.000 COP
+
+```{r}
+df$valor %>% summary %>% as.array() %>% kable
+```
+
+La distribucion de los datos genera que la media del valor se vea desplazada. Efecto de simetria y curtosis evidenciado. Datos no normales (de manera grafica)
+
+
+```{r}
+ggplot(df, aes(x=valor/100000))+
+  geom_boxplot()+
+  xlab("Valor transaccion (en Miles)")+
+  ggtitle("Boxplot")
+```
+Claramente el boxplot identifica muchos datos atipicos (dada la naturaleza de la distribucion de los datos). Con esta idea se realziarán analisis más adelante. 
+
+## Valor en funcion del tiempo 
+
+```{r}
+df$fecha_efectiva %>% summary
+```
+Los datos abarcan informacion desde septiembre del 2020 a marzo del 2021.
+
+## Grafico diario
+
+```{r}
+# cree el mes
+
+
+df_agrupado = df %>% group_by(fecha_efectiva) %>% 
+  summarise(total_valor = sum(valor))
+
+
+df_agrupado$total_valor = df_agrupado$total_valor/100000
+
+ggplotly(ggplot(df_agrupado, aes(x = (fecha_efectiva), y = total_valor)) +
+  geom_line() +
+  labs(title = "Serie de tiempo diaria",
+       x = "Fecha",
+       y = "Total Valor (Miles)") +
+  theme_minimal())
+```
+
+Diariamente, el valor de las transacciones se mantiene alrededor de una cifra constante, generalmente por debajo de los 70 mil pesos. Sin embargo, se observa un notable aumento en las transacciones diarias durante las fechas festivas, especialmente a finales de noviembre e inicios de diciembre
+
+## Grafico por semana 
+
+
+```{r}
+# cree el mes
+df <- df %>%
+  mutate(semana = format(fecha_efectiva, "%Y-%U"))
+
+
+df_agrupado = df %>% group_by(semana) %>% 
+  summarise(total_valor = sum(valor))
+
+df_agrupado$semana = as.Date(paste(df_agrupado$semana,1), format="%Y-%U %u")
+
+df_agrupado$total_valor = df_agrupado$total_valor/1000000
+
+ggplotly(ggplot(df_agrupado, aes(x = (semana), y = total_valor)) +
+  geom_line() +
+  labs(title = "Serie de tiempo por semana",
+       x = "Fecha",
+       y = "Total Valor (Millones)") +
+  theme_minimal()+theme(axis.text.x = element_text(angle = 45,hjust=1))+
+  scale_x_date(date_breaks = "2 week"))
+  
+  
+```
+Semanalmente, se observa una disminución en el valor de las transacciones al inicio del año, siendo enero un periodo propicio para la implementación de estrategias de mercadeo clave.
+
+## Grafico por mes
+
+```{r}
+# cree el mes
+df <- df %>%
+  mutate(mes = format(fecha_efectiva, "%Y-%m"))
+
+
+df_agrupado = df %>% group_by(mes) %>% 
+  summarise(total_valor = sum(valor))
+
+df_agrupado$mes = ym(df_agrupado$mes)
+df_agrupado$total_valor = df_agrupado$total_valor/1000000
+
+ggplotly(ggplot(df_agrupado, aes(x = (mes), y = total_valor)) +
+  geom_line() +
+  labs(title = "Serie de tiempo por mes",
+       x = "Fecha",
+       y = "Total Valor (Millones)") +
+  theme_minimal()+
+  scale_x_date(date_breaks = "1 month"))
+
+rm(list = setdiff(ls(), "df"))
+
+```
+
+Mes a mes, se identifica una disminución en el total de transacciones. En este contexto, resulta evidente que enero experimenta una caída significativa, seguida de una recuperación importante que se espera tenga lugar en febrero.
+
+## Conclusion analisis temporal
+
+
+Basándose en los datos, se evidencia que el fin de año es crucial para la preparación del mes que muestra un notable pico en las caídas de las transacciones, enero. En consecuencia, se aconseja al equipo de ventas implementar la estrategia de mercadeo a partir de mediados de diciembre para que surta efecto en enero. 
+
+
+# Analisis descriptivos (Bivariado)
+
+
+En este apartado, se busca analizar el valor de las transacciones en función del tipo de transacción realizada. A partir de análisis previos, se ha llegado a la conclusión de que la categoría "SEGURO" no es representativa, dado que cuenta únicamente con 4 observaciones. Con el objetivo de ser más efectivo, se procede a descartarla de los análisis subsiguientes
+
+```{r}
+df = df %>% filter(clase=="AVANCE" | clase =="COMPRA")
+df$clase = df$clase %>% droplevels(exclude = "SEGURO")
+```
+
+## Boxplot
+```{r}
+ggplot(df, aes(x = clase, y = valor/100000)) +
+  geom_boxplot() +
+  labs(title = "Boxplot de Valor por Clase (En miles)",
+       x = "Clase",
+       y = "Valor") +
+  theme_minimal()
+```
+
+
+Las transacciones de compra muestran, en promedio, una mayor volatilidad, sugiriendo la necesidad de categorizar la población según el monto de sus compras. Se procede a analizar las poblaciones segregadas por clase.
+
+```{r}
+
+p1=ggplot(df %>% filter(clase=="AVANCE"), aes(x=valor/100000)) +
+  geom_histogram(bins = 30, fill = "red") +
+  xlab("Valor") +
+  ylab("Conteo") +
+  ggtitle("Histograma Avances (Miles)")
+
+
+p2=ggplot(df %>% filter(clase=="COMPRA"), aes(x=valor/1000000))+
+  geom_histogram(bins =30, fill = "blue")+
+  xlab("Valor")+
+  ylab("Conteo")+
+  ggtitle("Histograma Compras (Millon)")
+
+gridExtra::grid.arrange(p1,p2,ncol =2)
+```
+
+
+De los anteriores gráficos se concluye que:
+
+  * En el caso de los clientes que realizan avances, la inmensa mayoría efectúa avances de cuantías menores a 800,000 pesos. De hecho, casi todos los valores se concentran en el rango entre 400,000 y 800,000 pesos.
+
+  * En cuanto a los clientes que realizan compras, se identifica que la inmensa mayoría efectúa transacciones por montos menores a 2 millones de pesos. La mayoría de los valores oscilan alrededor de un millón de pesos.
+
+
+# Asignacion de estrategia comercial
+
+Como se ha identificado que los avances representan aproximadamente el 22.4% de la cartera, mientras que las compras constituyen alrededor del 77.6%, se recomienda ajustar la estrategia de la siguiente manera:
+
+Para el grupo de clientes que realizan avances, se propone asignar un descuento uniforme del 25%. Esto permitirá maximizar el beneficio potencial, focalizándose en los clientes que son puntos críticos del problema propuesto. Estos clientes en general son clientes con transacciones de bajo valor pero que se desea tomen compras; si se incentiva el 25% sobre ellos directamente, en el peor de los escenarios; el descuento aplicado será a compras de no muy alto valor.
+
+En cuanto a los beneficios del 20% y 5%, se sugiere primero segmentar la población según el valor de las compras realizadas. Se sobreentiende que si los clientes ya efectúan compras por montos significativos, se les asigna la categoria de cliente con afinidad al producto. 
+
+```{r}
+df_compras = df %>% filter(clase =="COMPRA")
+outliers = boxplot.stats(df$valor)$out # clientes con valores mas altos de compras
+df_out = df %>%  filter(valor %in% outliers )
+df_gral = df %>% filter(!(valor %in% outliers) )
+```
+
+```{r}
+p1=ggplot(df_out, aes(x=valor/1000000))+
+  geom_histogram(fill = "orange")+
+  xlab("Valor transaccion (En millones)")+
+  ylab("Frecuencia")+
+  ggtitle("Histograma outliers valor transaccion")+
+  theme_minimal()
+p1 = ggplotly(p1)
+
+p2=ggplot(df_gral, aes(x=valor/1000000))+
+  geom_histogram(fill = "lightblue")+
+  xlab("Valor transaccion (millon)")+
+  ylab("Frecuencia")+
+  ggtitle("Valor transaccion (Poblacion gral)")+
+  theme_minimal()
+
+p2 = ggplotly(p2)
+subplot(p1, p2, nrows = 1)
+```
+
+Se puede evidenciar que el grueso de la poblacion (Histograma de la derecha) se mueve entre 0-300.000 pesos. Este grueso de datos representa una poblacion que compra con mucha frecuencia en dichos valores. *A los compradores con transacciones entre 0 a 300 mil pesos se propone asignar un descuento del 20%*.
+
+Por otra parte, los clientes considerados outliers (que compran valores muy por encima del promedio) se concentran en valores entre 1 a 3 millones de pesos. En consecuencia *se le decide dar el descuento del 5% a los clientes que cumplen dicha caracteristica*
+
+
+## Perfil de cliente creado
+
+Los perfiles ideales a los que se ha de asignar los descuentos son:
+
+ 1) 25% para los clientes que solo registran avances
+ 
+ 2) 20% para los clientes con transacciones de compra con tope maximo de 300.000 pesos
+ 
+ 3) 5% para los clientes con transacciones de compra entre 1 a 3 millones de pesos. 
+ 
+ 4) Dado el analisis de fecha, se recomienda implementar estrategia de tal manera que disminuya el impacto global de las transacciones totales registradas en enero. 
+
+

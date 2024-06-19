@@ -1,0 +1,515 @@
+gdp - literacy
+
+gdp con service
+
+3) Existe una relacion fuerte entre gdp y phone
+
+4) Existe una relacion inversa entre birthrate y gdp al igual que con agriculture
+
+Dado este hallazgo, se podria intentar analizar a profundidad de manera descriptiva dicha relacion. 
+
+LITERACY OK
+
+PHONE OK
+
+BIRTH RATE LOG OK
+
+AGRICULTURE_LOG OK
+
+---
+title: "Ejercicio 2"
+author: "Nicole Mayol"
+date: "2024-02-16"
+output: rmdformats::readthedown
+code_folding: hide
+---
+
+
+```{r message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
+df=read.csv(file = "gdp.csv",header=T,sep=";",dec=".")
+df = df[,-1]
+require(tidyverse)
+require(magrittr)
+library(leaps)
+require(ggplot2)
+require(janitor)
+require(plotly)
+require(kableExtra)
+```
+
+
+1) (2.5) Realiza un análisis descriptivo completo de los datosra este caso usaremos las indicadoras de las primeras 3 categorias, con:
+
+
+
+```{r}
+# se verifica los archivos se lean correctamente
+df %>% dim
+df %>% head
+df %>% tail
+df = df %>% clean_names()
+```
+# NA's
+
+```{r}
+df %>% summary
+#df$country = df$country %>% as.factor()
+df$region = df$region %>% as.factor()
+```
+
+
+```{r}
+# conteo de NA's
+colSums(is.na(df))
+```
+
+Se identifican los NA en las anteriores variables. Se procede a analizar caso a caso cada variable para identificar el potencial problema y toma de medidas caso a caso. 
+
+## net_migration
+
+
+```{r}
+df$net_migration %>% summary
+```
+
+
+```{r}
+df$net_migration %>%shapiro.test()
+```
+A pesar de no ser datos normales, se puede ver que la distribucion parece estar centrada. Por este motivo se reemplazan los 3 na por la media de la variable aleatoria. 
+
+```{r}
+replace_na_with_mean <- function(data, column_name) {
+  mean_value <- mean(data[[column_name]], na.rm = TRUE)
+  data[[column_name]][is.na(data[[column_name]])] <- mean_value
+  return(data)
+}
+
+```
+
+```{r}
+df = replace_na_with_mean(df, "net_migration")
+```
+
+
+## Mortalidad infantil
+
+```{r}
+df$infant_mortality %>% hist
+df$infant_mortality %>% summary
+
+```
+
+De manera descriptiva se observa que es una distribucion sesgada a la derecha. Se toma como valor para inputar la mediana y no el promedio
+
+```{r}
+replace_na_with_median <- function(data, column_name) {
+  mean_value <- median(data[[column_name]], na.rm = TRUE)
+  data[[column_name]][is.na(data[[column_name]])] <- mean_value
+  return(data)
+}
+
+df = replace_na_with_median(df, "infant_mortality")
+```
+
+## GDP: PIB per capita
+
+```{r}
+df$gdp %>% summary
+df$gdp %>% hist()
+```
+```{r}
+na_indices <- which(is.na(df$gdp))
+print(df[na_indices, ])
+```
+
+Como el GDP es una medida propia de cada pais, seria un error reemplzar por la media, mediana o alguna otra medida; se podria verificar si este dato podria reemplazarse por el PIB promedio de la zona cercana (mismo continete/region) pero para tomar dicha decision se requiere de la recomendacion de un experto. Dada esta situacion; se opta por eliminar dicho registro. 
+
+
+```{r}
+df = df[-na_indices,]
+```
+
+## Literacy
+
+
+```{r}
+df$literacy %>% summary
+df$literacy %>% hist
+```
+
+```{r}
+df[df$literacy %>% is.na,]
+```
+A priori, no existe forma en la cual se pueda inputar los datos faltantes de literacy para los paises que poseen NA. Podria imputarse la mediana al ser el valor mas comun pero, esto podria sesgar los datos dado que se reemplazan 17 datos del total (226) en una variable que describe *culturalmente* un pais. Se opta por imputar por la mediana dada la distribucion con cola pesada a izquierda pero se hace a sabiendas que los datos han de ser constrastados con el conocimiento de un experto
+
+```{r}
+df = replace_na_with_median(df, "literacy")
+```
+
+##phones
+
+```{r}
+df$phones %>% summary
+df$phones %>% hist
+```
+
+Se reemplaza por la mediana
+
+```{r}
+
+df = replace_na_with_median(df, "phones")
+```
+
+## arable
+
+```{r}
+df$arable %>% summary
+df$arable %>% hist
+```
+Dado el poco numero de NA's y la distribucion asociada, se reemplaza por mediana.
+
+```{r}
+df = replace_na_with_median(df, "arable")
+```
+
+
+## crops
+
+```{r}
+df$crops %>% summary
+df$crops %>% hist
+```
+
+Se reemplaza por la mediana
+
+```{r}
+
+df = replace_na_with_median(df, "crops")
+```
+
+## other
+
+```{r}
+df$other %>% summary
+df$other %>% hist
+```
+
+Se reemplazan NA por la mediana. 
+
+```{r}
+df = replace_na_with_median(df, "other")
+```
+
+## birthrate & deathrate
+
+```{r}
+df$birthrate %>% summary
+df$birthrate %>% hist
+df = replace_na_with_median(df, "birthrate")
+```
+
+Se reemplaza por la mediana
+
+
+```{r}
+df$deathrate %>% summary
+df$deathrate %>% log %>% hist
+df = replace_na_with_mean(df, "deathrate")
+```
+Se reemplaza por la media. 
+
+## agriculture
+
+```{r}
+df$agriculture %>% summary
+df$agriculture %>% hist
+```
+
+
+```{r}
+df = replace_na_with_median(df, "agriculture")
+```
+
+## industry
+
+
+```{r}
+df$industry %>% summary
+df$industry %>% hist
+```
+
+Esto es mas normal que la arepa al desayunito (Aplica solo en antioquia, colombia)
+
+```{r}
+df$industry  %>% shapiro.test() 
+```
+Segun la prueba no, segun mi corazon; si. Se reemplaza por la media.
+
+```{r}
+df = replace_na_with_mean(df, "industry")
+```
+
+
+## service
+
+```{r}
+df$service %>% summary
+df$service %>% hist
+```
+Se reemplaza por la media. 
+
+```{r}
+df = replace_na_with_mean(df, "service")
+```
+
+## Comentarios sobre la inputacion
+
+Se utilizan medidas de tendencia central para reemplazar los valores faltantes en algunos casos y en otros se eliminaron. Dicho procedimiento deberia ser verificado por el experto en la investigacion para contrastar si este analisis tiene sentido.
+
+
+```{r}
+colSums(df %>% is.na)
+```
+
+Se evidencia que ya no se poseen datos faltantes. Se procede a realizar el analissi descriptivo.
+
+
+## Analisis descriptivo
+
+Se procede a analizar de manera general la base de datos para encontrar posibles relaciones de interes. Primero se grafica a nivel univariado cada una de las features del dataframe
+
+
+```{r}
+
+# Seleccionar solo las columnas numéricas
+numeric_df <- df[, sapply(df, is.numeric)]
+
+# Calcular la matriz de correlación
+correlation_matrix <- cor(numeric_df)
+# Seleccionar solo las columnas numéricas
+numeric_df <- df[, sapply(df, is.numeric)]
+
+# Calcular la matriz de correlación
+correlation_matrix <- cor(numeric_df) %>% round(3)
+z=ggplot(data = reshape2::melt(correlation_matrix), aes(x = Var1, y = Var2, fill = value)) +
+  geom_tile(color = "white") +
+  scale_fill_gradient2(low = "#4287f5", mid = "white", high = "#f54242", midpoint = 0,
+                       limits = c(-1, 1), name = "Correlation") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  labs(title = "Heatmap de Correlación")
+
+z %>% ggplotly()
+
+```
+
+
+De manera grafica se observan correlaciones altas entre ciertas variables. Como la idea es predecir GDP; entonces al analizar la correlacion de gdp con otras variables se observa que:
+
+1) Existe una relacion inversa entre gdp y la mortalidad infantil
+
+2) Al parecer existe una relacion medianamente fuerte entre gdp y literacy; junto a gdp y service
+
+3) Existe una relacion fuerte entre gdp y phone
+
+4) Existe una relacion inversa entre birthrate y gdp al igual que con agriculture
+
+Dado este hallazgo, se podria intentar analizar a profundidad de manera descriptiva dicha relacion. 
+
+
+## GDP y Mortalidad infantil
+
+```{r}
+plot(df$gdp, df$infant_mortality )
+```
+Este grafico podria mostrar una relacion cuadratia entre estos valores. Sin embargo note que
+
+
+
+```{r}
+plot(df$gdp, df$infant_mortality %>% log )
+```
+
+Al aplicar una transformacion logaritimica, se establece una relacion lineal mas clara. Esto tiene sentido puesto que; los valores asociados a dicha variable se pueden aplicar dicha transformacion dado que el cero no esta dentro de los valores que toma dicha variable aleatoria (Tecnicamente, podria existir un pais con mortalidad infantil cero, matematicamente tiene sentdo pero es biologicamente imposible). Se propone aplicar una transformacion logaritmica a ducha variable
+
+```{r}
+df$infant_mortality_log = df$infant_mortality %>% log
+df = subset(df, select = - infant_mortality)
+```
+
+## GDP vs literacy
+
+```{r}
+plot(df$gdp, df$literacy)
+```
+
+Nuveamente, parece haber una relacion polinomica de algun tipo. Observe que:
+
+```{r}
+df$literacy %>% summary
+```
+El valor minimo tomado por literacy sigue siendo mayor a cero, por tanto es factible aplicar una transformacion logaritmica. Al hacer esto se tiene que:
+
+```{r}
+plot(df$gdp,df$literacy %>% log)
+```
+
+Sigue sin estabilizar la varianza. Despues de aplicar diferentes transofmraciones, los datos no presentan cambios. Se procede a dejarlos en la misma escala por ahora. 
+
+```{r}
+
+cor(df$gdp, df$literacy)
+cor(df$gdp, df$literacy %>% log)
+```
+Correlacion disminuye despues de transformar variable.
+
+## GDP vs Service
+
+```{r}
+plot(df$gdp, df$service)
+```
+Parece haber una relacion muy marcada en estos datos. Los gdp mas pequeños concentran el mayor numero de servicios entre 0.2 y 0.7; es consistente con el analisis donde se ve una relacion debil. 
+
+```{r}
+plot(df$gdp, df$service %>% log)
+```
+```{r}
+cor(df$gdp, df$service)
+
+cor(df$gdp, df$service %>% log)
+```
+Al aplicar la transformacion logaritmica a services, disminuye considerablemente el valor de la correlacion. No se transforma. 
+
+## GDP vs Phone
+
+```{r}
+plot(df$gdp, df$phones)
+```
+
+GDP poseen una relacion lineal muy marcada; esto es, a medida que el gdp aumenta dado el pais, se tienen mayor numero de telefonos por 1000 personas. 
+
+por amor al arte, miremos que genera una transformacion logaritimica. 
+
+```{r}
+plot(df$gdp, log(df$phones))
+
+```
+
+En ese casom se observa que existe una relacion ahora quizas; de raiz cuadrada/logaritmica en los datos. Esto implica que siempre se ha de saber cuando aplicar una transformacion. Cuando se trabaja con los datos sin transformar se tiene una correlacion de Pearson de 0.8308649; mientras que dicha correlacion baja a0.678812 en escala logaritmica de phones.
+
+
+## GDP vs Birthrate
+
+```{r}
+plot(df$gdp, df$birthrate )
+```
+
+Existe una correlacoin no muy marcada. A medida que se tienen pauises con un gdp mayor, la natalidad disminuye (Como buen colombiano, puedo dar fe de esto, los pobres tienen mas hijos. Fuente: Creame)
+
+Observemos la escala logaritmica.
+
+```{r}
+plot(df$gdp, df$birthrate %>% log)
+```
+```{r}
+cor(df$gdp, df$birthrate)
+cor(df$gdp, df$birthrate %>% log)
+
+```
+
+Al aplicar la transformacion logaritimica, la correlacion mejora ligeramente. Se procede a transformar dicha variable puesto que el cero no hace parte de las observaciones
+
+```{r}
+df$birthrate_log = df$birthrate %>% log
+df = subset(df, select = -birthrate)
+```
+
+
+## GDP vs agriculture
+
+```{r}
+plot(df$gdp, df$agriculture)
+```
+
+Datos piden a grito una transformacion logaritimica. Sin embargo note que
+
+```{r}
+df$agriculture %>% summary
+```
+Existen observaciones con datos de agricultura igual a cero. Tecnicamente es pposible que un dato posea 0 en agriculutre; puesto que seria un pais que no produce agriculutra de ningun tipo. 
+
+```{r}
+df %>% filter(agriculture==0)
+```
+https://www.trade.gov/country-commercial-guides/singapore-agriculture
+
+Como muestra el anterior enlace, no solo Singapur produce grandes cantidades de vegetale s y cultivos al año, sino que es un importante competidor en el mercado asiatico. 
+
+Para este analisis, se ignora dicho dato y se aplica transformacion logaritmica.
+
+```{r}
+df_sing = df %>% filter(agriculture >0)
+plot(df_sing$gdp, df_sing$agriculture %>% log)
+```
+
+```{r}
+cor(df$gdp, df$agriculture)
+df = df %>% filter(agriculture >0)
+cor(df_sing$gdp, df_sing$agriculture %>% log)
+
+```
+Al aplicar la transformacio  logaritmica a los datos, se mejora significavtivamente la correlacion. 
+
+```{r}
+df$agriculture_log = df$agriculture %>% log
+df = subset(df, select = -agriculture)
+
+```
+
+## GDP vs ALL
+
+Se procede a realziar un analisis del GDP en funcio  de las demas variables que podrian dar informacion significativa
+
+```{r}
+
+promedio_gdp_por_pais <- df %>%
+  group_by(country) %>%
+  summarise(Prom_GDP = mean(gdp)) %>%
+  arrange(desc(Prom_GDP)) %>% head(15)
+
+# Graficar en un barplot
+barplot(promedio_gdp_por_pais$Prom_GDP, 
+        names.arg = promedio_gdp_por_pais$country,
+        las = 2,  # Orientación vertical de los nombres de país en el eje x
+        main = "AVG GDP per country (First 15)" ,
+        xlab = "Country",
+        ylab = "AVG GDP")
+
+
+```
+
+Destaca muy por encima de los demas, Luxemburgo. 
+
+```{r}
+
+promedio_gdp_por_pais <- df %>%
+  group_by(region) %>%
+  summarise(Prom_GDP = mean(gdp)) %>%
+  arrange(desc(Prom_GDP))
+
+# Graficar en un barplot
+barplot(promedio_gdp_por_pais$Prom_GDP, 
+        main = "AVG GDP per Region (First 15)" ,
+        xlab = "Country",
+        ylab = "AVG GDP", 
+        names.arg = promedio_gdp_por_pais$region, 
+        las =1)
+
+```
+
+## Conclusiones EDA
+
+Dado el analisis exploratorio, se identificaron algunas variables que se espera, sean cruciales a la hora de ajustar un modelo de regresion para predecir el GDP (literacy, servicem phone, birthrate y agriculture)
+
+# Best subset Subselection
